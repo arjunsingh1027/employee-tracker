@@ -61,8 +61,24 @@ function start() {
 }
 
 // view all employees
+function viewAllEmployees() {
+    connection.query("SELECT * FROM employee", 
+    function(err, res){
+        if (err) throw err
+        console.table(res)
+        start();
+    });
+}
 
 // view all roles
+function viewEmployeeRolls() {
+    connection.query("SELECT * FROM role", 
+    function(err, res){
+        if (err) throw err
+        console.table(res)
+        start();
+    });
+}
 
 // view employees by departments
 
