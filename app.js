@@ -24,36 +24,57 @@ function start() {
             message: "What would you like to do?",
             name: "choice",
             choices: [
-                "View all employees",
-                "View all employees by role",
-                "View all employees by department",
-                "Update employee information",
-                "Add an employee",
-                "Add a role",
-                "Add a department"
+                {
+                    name: "View all employees",
+                    value: "VIEW_ALL_EMPLOYEES"
+                },
+                {
+                    name: "View all employees by role",
+                    value: "VIEW_EMPLOYEES_BY_ROLE"
+                },
+                {
+                    name: "View all employees by department",
+                    value: "VIEW_EMPLOYEES_BY_DEPARTMENT"
+                },
+                {
+                    name: "Update employee information",
+                    value: "UPDATE_EMPLOYEE_INFO"
+                },
+                {
+                    name: "Add an employee",
+                    value: "ADD_EMPLOYEE"
+                },
+                {
+                    name: "Add a role",
+                    value: "ADD_ROLE"
+                },
+                {
+                    name: "Add a department",
+                    value: "ADD_DEPARTMENT"
+                }
             ]
         }
-    ]).then(function (val) {
-        switch (val.choice) {
-            case "View all employees":
+    ]).then(function (choice) {
+        switch (choice) {
+            case "VIEW_ALL_EMPLOYEES":
                 viewAllEmployees();
                 break;
-            case "View all employees by role":
+            case "VIEW_EMPLOYEES_BY_ROLE":
                 viewEmployeeRolls();
                 break;
-            case "View all employees by department":
+            case "VIEW_EMPLOYEES_BY_DEPARTMENT":
                 viewDepartments();
                 break;
-            case "Update employee information":
+            case "UPDATE_EMPLOYEE_INFO":
                 updateInfo();
                 break;
-            case "Add an employee":
+            case "ADD_EMPLOYEE":
                 addEmployee();
                 break;
-            case "Add a role":
+            case "ADD_ROLE":
                 addRole();
                 break;
-            case "Add a department":
+            case "ADD_DEPARTMENT":
                 addDepartment();
                 break;
         }
@@ -62,25 +83,28 @@ function start() {
 
 // view all employees
 function viewAllEmployees() {
-    connection.query("SELECT * FROM employee", 
-    function(err, res){
-        if (err) throw err
-        console.table(res)
-        start();
-    });
+    connection.query("SELECT * FROM employee",
+        function (err, res) {
+            if (err) throw err
+            console.table(res)
+            start();
+        });
 }
 
 // view all roles
 function viewEmployeeRolls() {
-    connection.query("SELECT * FROM role", 
-    function(err, res){
-        if (err) throw err
-        console.table(res)
-        start();
-    });
+    connection.query("SELECT * FROM role",
+        function (err, res) {
+            if (err) throw err
+            console.table(res)
+            start();
+        });
 }
 
 // view employees by departments
+function viewDepartments() {
+
+}
 
 // add employee
 
