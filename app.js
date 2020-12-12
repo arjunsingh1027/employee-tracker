@@ -1,23 +1,8 @@
 const inquirer = require("inquirer");
-const mysql = require("mysql");
-
-
-// mysql connection
-const connection = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "root",
-    database: "employee_trackerdb",
-});
-
-connection.connect(function (err) {
-    if (err) throw err
-    console.log("Connected as Id" + connection.threadId)
-    start();
-});
+const connection = require("./db/connection.js");
 
 // initial prompt
-function start() {
+function init() {
     inquirer.prompt([
         {
             type: "list",
@@ -51,16 +36,20 @@ function start() {
                 {
                     name: "Add a department",
                     value: "ADD_DEPARTMENT"
+                },
+                {
+                    name: "View all departments",
+                    value: "VIEW_ALL_DEPARTMENTS"
                 }
             ]
         }
-    ]).then(function (choice) {
+    ]).then(function ({ choice }) {
         switch (choice) {
             case "VIEW_ALL_EMPLOYEES":
-                viewAllEmployees();
+                viewEmployees();
                 break;
             case "VIEW_EMPLOYEES_BY_ROLE":
-                viewEmployeeRolls();
+                viewAllRoles();
                 break;
             case "VIEW_EMPLOYEES_BY_DEPARTMENT":
                 viewDepartments();
@@ -77,39 +66,91 @@ function start() {
             case "ADD_DEPARTMENT":
                 addDepartment();
                 break;
+            case "VIEW_ALL_DEPARTMENTS":
+                viewDepartments();
+                break;
         }
     })
 }
 
 // view all employees
-function viewAllEmployees() {
+function viewEmployees() {
     connection.query("SELECT * FROM employee",
         function (err, res) {
             if (err) throw err
             console.table(res)
-            start();
+            init();
         });
 }
 
 // view all roles
-function viewEmployeeRolls() {
+function viewAllRoles() {
     connection.query("SELECT * FROM role",
         function (err, res) {
             if (err) throw err
             console.table(res)
-            start();
+            init();
         });
 }
 
-// view employees by departments
+// view all departments
 function viewDepartments() {
-
+    connection.query("SELECT * FROM department",
+        function (err, res) {
+            if (err) throw err
+            console.table(res)
+            init();
+        });
 }
 
 // add employee
-
-// update employee
-
-// add role
+function addEmployee() {
+    // const newEmployee = inquirer.prompt([
+    //     {
+    //         name: "first_name",
+    //         message: "What is the employees first name",
+    //     },
+    //     {
+    //         name: "last_name",
+    //         message: "What is the employees last name",
+    //     },
+    //     {
+    //         name: "role_id",
+    //         message: "What role would you like to give you employee",
+    //         type: "list",
+    //         choices: roles.map((role) => ({
+    //             name: role.title,
+    //             value: role.id,
+    //         })),
+    //     },
+    // ]);
+    // console.log(newEmployee);
+    // init();
+}
 
 // add department
+function addDepartment() { 
+
+    inquirer.prompt([
+        {
+          name: "name",
+          type: "input",
+          message: "What Department would you like to add?"
+        }
+    ]).then(function(res) {
+        var query = connection.query(
+            "INSERT INTO department SET ? ",
+            {
+              name: res.name
+            
+            },
+            function(err) {
+                if (err) throw err
+                console.table(res);
+                init();
+            }
+        )
+    })
+  }
+
+init();
