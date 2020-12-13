@@ -106,7 +106,7 @@ function viewDepartments() {
         });
 }
 
-// select role and manager queries for add employee prompt
+// select role query for add employee prompt
 const roleArray = [];
 function selectRole() {
     connection.query("SELECT * FROM role", function (err, res) {
@@ -116,17 +116,6 @@ function selectRole() {
         }
     })
     return roleArray;
-}
-
-const managerArray = [];
-function selectManager() {
-    connection.query("SELECT first_name, last_name FROM employee WHERE manager_id IS NULL", function (err, res) {
-        if (err) throw err
-        for (var i = 0; i < res.length; i++) {
-            managerArray.push(res[i].first_name);
-        }
-    })
-    return managerArray;
 }
 
 // add employee
@@ -148,25 +137,24 @@ function addEmployee() {
             message: "What is the employee's role?",
             choices: selectRole()
         }
-    ]).then(function(val){
+    ]).then(function (val) {
         const roleId = selectRole().indexOf(val.role) + 1
         connection.query("INSERT INTO employee SET ?",
-        {
-            first_name: val.firstName,
-            last_name: val.lastName,
-            role_id: roleId
-        },
-        function(err){
-            if (err) throw err
-            console.table(val)
-            init();
-        })
+            {
+                first_name: val.firstName,
+                last_name: val.lastName,
+                role_id: roleId
+            },
+            function (err) {
+                if (err) throw err
+                console.table(val)
+                init();
+            })
     })
 }
 
 // add department
 function addDepartment() {
-
     inquirer.prompt([
         {
             name: "name",
@@ -187,6 +175,40 @@ function addDepartment() {
             }
         )
     })
+}
+
+// add role
+function addRole() {
+    inquirer.prompt([
+        {
+            name: "name",
+            type: "input",
+            message: "What role would you like to add?"
+        },
+        {
+            name: "salary",
+            type: "input",
+            message: "What is the salary of this role?"
+        }
+    ]).then(function (res) {
+        connection.query("INSERT INTO role SET ?",
+            {
+                title: res.name,
+                salary: res.salary
+            },
+            function (err) {
+                if (err) throw err
+                console.table(res);
+                init();
+            }
+        )
+    }
+    )
+};
+
+// update employee role
+function updateInfo() {
+
 }
 
 init();
