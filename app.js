@@ -140,16 +140,9 @@ function addEmployee() {
             type: "list",
             message: "What is the employee's role?",
             choices: selectRole()
-        },
-        {
-            name: "role",
-            type: "list",
-            message: "What is their manager's name?",
-            choices: selectManager()
         }
     ]).then(function(val){
         const roleId = selectRole().indexOf(val.role) + 1
-        const managerId = selectManager().indexOf(val.choice) + 1
         connection.query("INSERT INTO employee SET ?",
         {
             first_name: val.firstName,
