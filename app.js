@@ -18,7 +18,7 @@ function init() {
                     value: "VIEW_EMPLOYEES_BY_ROLE"
                 },
                 {
-                    name: "View all employees by department",
+                    name: "View all departments",
                     value: "VIEW_EMPLOYEES_BY_DEPARTMENT"
                 },
                 {
@@ -36,10 +36,6 @@ function init() {
                 {
                     name: "Add a department",
                     value: "ADD_DEPARTMENT"
-                },
-                {
-                    name: "View all departments",
-                    value: "VIEW_ALL_DEPARTMENTS"
                 }
             ]
         }
@@ -103,54 +99,94 @@ function viewDepartments() {
         });
 }
 
+// select role and manager queries for add employee prompt
+const roleArray = [];
+function selectRole() {
+    connection.query("SELECT * FROM role", function (err, res) {
+        if (err) throw err
+        for (var i = 0; i < res.length; i++) {
+            roleArray.push(res[i].title);
+        }
+    })
+    return roleArray;
+}
+
+const managerArray = [];
+function selectManager() {
+    connection.query("SELECT first_name, last_name FROM employee WHERE manager_id IS NULL", function (err, res) {
+        if (err) throw err
+        for (var i = 0; i < res.length; i++) {
+            managerArray.push(res[i].first_name);
+        }
+    })
+    return managerArray;
+}
+
 // add employee
 function addEmployee() {
-    // const newEmployee = inquirer.prompt([
-    //     {
-    //         name: "first_name",
-    //         message: "What is the employees first name",
-    //     },
-    //     {
-    //         name: "last_name",
-    //         message: "What is the employees last name",
-    //     },
-    //     {
-    //         name: "role_id",
-    //         message: "What role would you like to give you employee",
-    //         type: "list",
-    //         choices: roles.map((role) => ({
-    //             name: role.title,
-    //             value: role.id,
-    //         })),
-    //     },
-    // ]);
-    // console.log(newEmployee);
-    // init();
+    inquirer.prompt([
+        {
+            name: "firstName",
+            type: "input",
+            message: "What is the employee's first name?"
+        },
+        {
+            name: "lastName",
+            type: "input",
+            message: "What is the employee's last name?"
+        },
+        {
+            name: "role",
+            type: "list",
+            message: "What is the employee's role?",
+            choices: selectRole()
+        },
+        {
+            name: "role",
+            type: "list",
+            message: "What is their manager's name?",
+            choices: selectManager()
+        }
+    ]).then(function(val){
+        const roleId = selectRole().indexOf(val.role) + 1
+        const managerId = selectManager().indexOf(val.choice) + 1
+        connection.query("INSERT INTO employee SET ?",
+        {
+            first_name: val.firstName,
+            last_name: val.lastName,
+            role_id: roleId
+        },
+        function(err){
+            if (err) throw err
+            console.table(val)
+            init();
+        })
+    })
 }
 
 // add department
-function addDepartment() { 
+function addDepartment() {
 
     inquirer.prompt([
         {
-          name: "name",
-          type: "input",
-          message: "What Department would you like to add?"
+            name: "name",
+            type: "input",
+            message: "What Department would you like to add?"
         }
-    ]).then(function(res) {
+    ]).then(function (res) {
         var query = connection.query(
             "INSERT INTO department SET ? ",
             {
-              name: res.name
-            
+                name: res.name
+
             },
-            function(err) {
+            function (err) {
                 if (err) throw err
                 console.table(res);
                 init();
             }
         )
     })
-  }
+}
 
 init();
