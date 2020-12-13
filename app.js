@@ -36,6 +36,10 @@ function init() {
                 {
                     name: "Add a department",
                     value: "ADD_DEPARTMENT"
+                },
+                {
+                    name: "Exit",
+                    value: "EXIT"
                 }
             ]
         }
@@ -64,6 +68,9 @@ function init() {
                 break;
             case "VIEW_ALL_DEPARTMENTS":
                 viewDepartments();
+                break;
+            case "EXIT":
+                process.exit(0);
                 break;
         }
     })
