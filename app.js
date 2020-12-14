@@ -208,7 +208,44 @@ function addRole() {
 
 // update employee role
 function updateInfo() {
-
+    connection.query("SELECT employee.first_name FROM employee JOIN role ON employee.role_id = role.id", function (err, res) {
+        if (err) throw err
+        console.log(res)
+        inquirer.prompt([
+            {
+                name: "firstName",
+                type: "rawlist",
+                choices: function () {
+                    var firstName = [];
+                    for (var i = 0; i < res.length; i++) {
+                        firstName.push(res[i].first_name);
+                    }
+                    return firstName;
+                },
+                message: "Who is the employee you would like to update?",
+            },
+            {
+                name: "role",
+                type: "rawlist",
+                message: "what is their new role?",
+                choices: selectRole()
+            }
+        ]).then(function (val) {
+            const roleId = selectRole().indexOf(val.role) + 1
+            connection.query("UPDATE employee SET WHERE ?",
+                {
+                    first_name: val.firstName
+                },
+                {
+                    role_id: roleId
+                },
+                function (err) {
+                    if (err) throw err
+                    console.table(val)
+                    init();
+                })
+        });
+    });
 }
 
 init();
